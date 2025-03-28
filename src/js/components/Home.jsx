@@ -9,6 +9,10 @@ const Home = () => {
 		try {
 			const response = await fetch("https://playground.4geeks.com/todo/users/DocGus")
 			console.log(response)
+			if (response.status == 404) {
+				crearUsuario()
+				return
+			}
 			const data = await response.json()
 			console.log(data.todos)
 			setLista(data.todos)
@@ -16,31 +20,64 @@ const Home = () => {
 			console.log(error)
 		}
 	}
+	//funcion fetch
+	const crearUsuario = async () => {
+		try {
+			const response = await fetch("https://playground.4geeks.com/todo/users/DocGus", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" }
+			})
+			console.log(response)
+		} catch (error) {
+			console.log(error)
+		}
+	}
 
-
-
-	const agregarTarea = (e) => {
+	const agregarTarea = async (e) => {
 		e.preventDefault()
 		if (task == "") {
 			alert("Debe ingresar la tarea")
 		} else {
-			setLista([...lista, task])
-			setTask("")
+			try {
+				const response = await fetch("https://playground.4geeks.com/todo/todos/DocGus", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"label": task,
+						"is_done": false
+					})
+				})
+				console.log(response)
+				if (response.status == 201) {
+					obtenerTareas()
+					setTask("")
+				}
+			} catch (error) {
+				console.log(error)
+
+			}
+
 		}
 
 	}
 
-	const eliminarTarea = (index) => {
-		let aux = lista.filter((item, id) => {
-			if (index != id) {
-				return item
+	const eliminarTarea = async (id) => {
+		try {
+			const response = await fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" }
+			})
+			console.log(response)
+			if (response.status == 204) {
+				obtenerTareas()
 			}
-		})
-		setLista(aux)
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	useEffect(() => {
-obtenerTareas()
+		obtenerTareas()
 	}, [])  //se ejecuta una sola ves ya que los corchetes estan vacios y no muestran variable
 
 	return (
@@ -55,7 +92,7 @@ obtenerTareas()
 					<li className="list-group-item" key={index}>
 
 						{tarea.label}
-						<button className="btn btn-danger float-end icono-oculto" onClick={() => eliminarTarea(index)}><i className="fa fa-trash"></i></button>
+						<button className="btn btn-danger float-end icono-oculto" onClick={() => eliminarTarea(tarea.id)}><i className="fa fa-trash"></i></button>
 					</li>
 				))}
 
