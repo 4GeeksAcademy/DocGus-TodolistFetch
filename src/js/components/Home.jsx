@@ -26,6 +26,7 @@ const Home = () => {
 			});
 		} catch (error) {
 			console.log(error);
+
 		}
 	};
 
@@ -67,6 +68,21 @@ const Home = () => {
 		}
 	};
 
+	const eliminarUsuario = async () => {
+		try {
+			const response = await fetch(`https://playground.4geeks.com/todo/users/DocGus`, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (response.status === 204) {
+				crearUsuario();
+				setLista([])
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	// Manejar tecla Enter
 	const handleKeyDown = (e) => {
 		if (e.key === "Enter") {
@@ -96,6 +112,15 @@ const Home = () => {
 				<button className="btn btn-success mt-2" onClick={(e) => agregarTarea(e)}>
 					Agregar Tarea
 				</button>
+				<button className="btn btn-danger mt-2 ms-3" onClick={() =>{
+					const result = confirm("¿Realmente deseas eliminar todas las tareas?")
+					if(result){
+						eliminarUsuario()
+					}
+				}}>
+					Eliminar todas las Tareas
+				</button>
+
 			</div>
 			<ul className="list-group">
 				{lista.map((tarea, index) => (
