@@ -123,14 +123,18 @@ const Home = () => {
 
 			</div>
 			<ul className="list-group">
-				{lista.map((tarea, index) => (
+				{lista && lista.length > 0 ? lista.map((tarea, index) => (
 					<li className="list-group-item" key={index}>
 						{tarea.label}
 						<button className="btn btn-danger float-end icono-oculto" onClick={() => eliminarTarea(tarea.id)}>
 							<i className="fa fa-trash"></i>
 						</button>
 					</li>
-				))}
+				)):
+				<li className="list-group-item">
+				No hay tareas, agrega alguna
+			</li>
+				}
 			</ul>
 			<p className="mt-3">
 				<strong>{tareasPendientes}</strong> tarea(s) pendiente(s)
